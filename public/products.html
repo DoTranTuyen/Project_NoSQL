@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>BestWatch - Products</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- CSS links -->
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="icon" href="images/fevicon.png" type="image/gif" />
+  <link rel="stylesheet" href="css/jquery.mCustomScrollbar.min.css">
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+  <link rel="stylesheet" href="css/owl.carousel.min.css">
+</head>
+<body>
+  <!-- header -->
+  <div class="header_section">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+       <div class="container">
+          <a class="logo" href="index.html"><img style="width: 70px; height: 70px;" src="images/logo.png"></a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" 
+                  aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+             <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+             <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a class="nav-link" href="/index.html">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/products.html">Product</a></li>
+                <li class="nav-item"><a class="nav-link" href="/cart.html">Cart</a></li>
+                <li class="nav-item"><a class="nav-link" href="">Shop</a></li>
+                <li class="nav-item"><a class="nav-link" href="">Contact Us</a></li>
+                <li id="admin-menu" class="nav-item"><a class="nav-link active" href="admin.html"><strong>Admin
+                  manage</strong></a></li>
+             </ul>
+             <form class="form-inline my-2 my-lg-0">
+              <div class="search_icon">
+                 <ul>
+                    <div class="dropdown" id="user-menu">
+                       <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
+                         <img src="images/user-icon.png">
+                       </a>
+                       <div class="dropdown-menu" aria-labelledby="userDropdown" id="user-dropdown-content">
+                         <!-- Nội dung sẽ thay đổi dựa trên login -->
+                       </div>
+                     </div>
+                 </ul>
+              </div>
+           </form>
+          </div>
+    </nav>
+ </div>
+  <!-- end header -->
+
+  <div class="container" style="margin-top:50px;margin-bottom:50px;">
+    <div id="all-products" class="row"></div>
+
+    <div class="pagination d-flex justify-content-center align-items-center mt-4">
+      <!-- Nút Prev -->
+      <button id="prev-page" class="pagination-btn">
+         <i class="fa fa-long-arrow-left"></i>
+      </button>
+   
+      <!-- Nút Next -->
+      <button id="next-page" class="pagination-btn">
+         <i class="fa fa-long-arrow-right"></i>
+      </button>
+   </div>
+    </div>
+  </div>
+
+  <!-- footer như cũ -->
+
+  <!-- JS -->
+  <script src="js/jquery.min.js"></script>
+      <script src="js/popper.min.js"></script>
+      <script src="js/bootstrap.bundle.min.js"></script>
+      <script src="js/jquery-3.0.0.min.js"></script>
+      <script src="js/plugin.js"></script>
+      <!-- sidebar -->
+      <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+      <script src="js/custom.js"></script>
+      <!-- javascript --> 
+      <script src="js/owl.carousel.js"></script>
+      <script src="js/owl.carousel.min.js"></script>
+      <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const container = document.getElementById('all-products');
+      const prevBtn = document.getElementById('prev-page');
+      const nextBtn = document.getElementById('next-page');
+      let currentPage = 1;
+      let totalPages = 1;
+      
+
+      function fetchProducts(page) {
+        fetch(`/api/products?page=${page}`)
+          .then(response => response.json())
+          .then(data => {
+            container.innerHTML = ''; // Xóa sản phẩm cũ
+            data.products.forEach(product => {
+              container.innerHTML += `
+                 <div class="col-md-4">
+                       <div class="box_main">
+                         <p class="chair_text">${product.name}</p>
+                         <div class="image_3">
+                           <img src="${product.image || 'images/default-product.png'}" alt="${product.name}">
+                         </div>
+                         <p class="chair_text">Price: $${product.price}</p>
+                         <form action="/cart/add" method="POST" class="d-flex justify-content-center">
+                           <input type="hidden" name="productId" value="${product._id}">
+                           <button type="submit" class="btn btn-success" style="margin-top:10px;">BUY NOW</button>
+                           </form>
+                       </div>
+                     </div>
+              `;
+            });
+            totalPages = data.totalPages;
+            updatePaginationButtons();
+          })
+          .catch(error => console.error('Error fetching products:', error));
+      }
+      
+      prevBtn.addEventListener('click', () => {
+        if (currentPage > 1) {
+          currentPage--;
+          fetchProducts(currentPage);
+        }
+      });
+
+      nextBtn.addEventListener('click', () => {
+        if (currentPage < totalPages) {
+          currentPage++;
+          fetchProducts(currentPage);
+        }
+      });
+
+      // Fetch trang đầu tiên
+      fetchProducts(currentPage);
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const adminMenu = document.getElementById('admin-menu');
+      fetch('/auth/me')
+        .then(res => res.json())
+        .then(data => {
+          const userDropdown = document.getElementById('user-dropdown-content');
+          userDropdown.innerHTML = '';
+          if(!data.loggedIn) {
+            // Chưa đăng nhập
+            userDropdown.innerHTML = `
+              <a class="dropdown-item" href="login.html">Login</a>
+              <a class="dropdown-item" href="register.html">Register</a>
+            `;
+            if (adminMenu) {
+                    // Ẩn menu admin nếu chưa đăng nhập
+                        adminMenu.classList.add('d-none');
+                    }
+          } else {
+            // Đã đăng nhập
+            userDropdown.innerHTML = `
+              <a class="dropdown-item" href="#">Profile</a>
+              ${data.role === 'admin' ? '<a class="dropdown-item" href="admin.html">Admin Panel</a>' : ''}
+              <a class="dropdown-item" href="/auth/logout">Logout</a>
+            `;
+            if (adminMenu) {
+                        // Hiển thị menu admin nếu vai trò là admin
+                        if (data.role === 'admin') {
+                            adminMenu.classList.remove('d-none');
+                        } else {
+                            adminMenu.classList.add('d-none');
+                        }
+                    }
+          }
+        });
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>BestWatch - Admin Panel</title>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Kiểm tra xem có phải admin không
+      fetch('/auth/me')
+        .then(res => res.json())
+        .then(data => {
+          if(!data.loggedIn || data.role !== 'admin') {
+            document.body.innerHTML = "Access Denied!";
+            return;
+          }
+    
+          // Lấy danh sách sản phẩm
+          fetch('/admin')
+            .then(res => res.json())
+            .then(products => {
+              const tbody = document.getElementById('admin-table-body');
+              tbody.innerHTML = ''; // clear if any
+              products.forEach((p, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                  <td>${index+1}</td>
+                  <td>${p.name}</td>
+                  <td>$${p.price}</td>
+                  <td>${p.description || ''}</td>
+                  <td><img src="${p.image||'images/default-product.png'}" style="width:50px;"></td>
+                  <td>
+                    <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editModal${p._id}">Edit</button>
+                    <form action="/admin/delete/${p._id}" method="POST" style="display:inline-block;">
+                      <button class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+
+                    <!-- Modal Update -->
+                    <div class="modal fade" id="editModal${p._id}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel${p._id}" aria-hidden="true">
+                      <div class="modal-dialog" role="document">
+                        <form action="/admin/update/${p._id}" method="POST" enctype="multipart/form-data">
+                          <input type="hidden" name="oldImage" value="${p.image||''}">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="editModalLabel${p._id}">Update Product</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span>&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" name="name" class="form-control" value="${p.name}">
+                              </div>
+                              <div class="form-group">
+                                <label>Price ($)</label>
+                                <input type="number" name="price" class="form-control" step="0.01" value="${p.price}">
+                              </div>
+                              <div class="form-group">
+                                <label>Description</label>
+                                <textarea name="description" class="form-control">${p.description||''}</textarea>
+                              </div>
+                              <div class="form-group">
+                                <label>Current Image</label><br>
+                                <img src="${p.image||'images/default-product.png'}" style="width:50px;"><br><br>
+                                <label>New Image (optional)</label>
+                                <input type="file" name="productImage" class="form-control">
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="submit" class="btn btn-success">Update</button>
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                    <!-- End Modal Update -->
+                  </td>
+                `;
+                tbody.appendChild(tr);
+              });
+            });
+        });
+    });
+  </script>
+  <!-- head tương tự index -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="icon" href="images/fevicon.png" type="image/gif" />
+  <link rel="stylesheet" href="css/jquery.mCustomScrollbar.min.css">
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+  <link rel="stylesheet" href="css/owl.carousel.min.css">
+</head>
+<body>
+  <!-- header -->
+  <div class="header_section">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container">
+        <a class="logo" href="index_admin.html"><img style="width:70px;height:70px;" src="images/logo.png"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse"
+          data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+          aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+             <li class="nav-item"><a class="nav-link" href="index_admin.html">Home</a></li>
+             <li class="nav-item"><a class="nav-link" href="products.html">Product</a></li>
+             <li class="nav-item"><a class="nav-link" href="cart.html">Cart</a></li>
+             <li class="nav-item"><a class="nav-link" href="shop.html">Shop</a></li>
+             <li class="nav-item"><a class="nav-link" href="contact.html">Contact Us</a></li>
+             <li id="admin-menu" class="nav-item"><a class="nav-link active" href="admin.html"><strong>Admin
+              manage</strong></a></li>
+          </ul>
+          <form class="form-inline my-2 my-lg-0">
+            <div class="search_icon">
+               <ul>
+                   <div class="dropdown" id="user-menu">
+                     <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
+                       <img src="images/user-icon.png">
+                     </a>
+                     <div class="dropdown-menu" aria-labelledby="userDropdown" id="user-dropdown-content">
+                       <!-- Nội dung sẽ thay đổi dựa trên login -->
+                     </div>
+                   </div>
+               </ul>
+            </div>
+         </form>
+        </div>
+    </nav>
+  </div>
+  <!-- header end -->
+
+  <div class="container" style="margin-top:50px;margin-bottom:50px;">
+    <div style="padding-top: 100px; align-items: center; height: 100px;">
+      <h2 style="margin-top:20px; padding-top: 20px;">Admin Panel - Product Management</h2>
+      <h4 style="margin-top:5px; padding-top: 5px;">Add New Product</h4>
+    </div>
+    <hr>
+    <!-- Form thêm sản phẩm -->
+    <form action="/admin/create" method="POST" enctype="multipart/form-data">
+      <div style="padding-top: 100px;">
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" class="form-control" name="name" placeholder="Product Name" required>
+        </div>
+        <div class="form-group">
+          <label>Price ($)</label>
+          <input type="number" class="form-control" name="price" step="0.01" required>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea class="form-control" name="description" placeholder="Product description"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Product Image</label>
+          <input type="file" class="form-control" name="productImage" required>
+        </div>
+        <button type="submit" class="btn btn-success">Add Product</button>
+      </div>
+      
+    </form>
+    <hr>
+    <!-- Danh sách sản phẩm động -->
+    <h4>Product List</h4>
+    <table class="table table-bordered table-hover">
+      <thead class="thead-light">
+        <tr>
+          <th style="width:5%;">#</th>
+          <th style="width:20%;">Name</th>
+          <th style="width:10%;">Price</th>
+          <th style="width:25%;">Description</th>
+          <th style="width:10%;">Image</th>
+          <th style="width:30%;">Action</th>
+        </tr>
+      </thead>
+      <tbody id="admin-table-body">
+        <!-- Sẽ được điền động bởi JS -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- footer -->
+  <div class="footer_section">
+    <div class="container">
+      <div class="footer_location_text">
+         <ul>
+            <li><img src="images/map-icon.png"><span class="padding_left_10"><a href="#">Address here</a></span></li>
+            <li><img src="images/call-icon.png"><span class="padding_left_10"><a href="#">Call : +7586656566</a></span></li>
+            <li><img src="images/mail-icon.png"><span class="padding_left_10"><a href="#">demo@gmail.com</a></span></li>
+         </ul>
+      </div>
+      <div class="row">
+         <div class="col-lg-3 col-sm-6">
+            <h2 class="useful_text">Useful link </h2>
+            <div class="footer_menu">
+               <ul>
+                  <li><a href="index.html">Home</a></li>
+                  <li><a href="products.html">Product</a></li>
+                  <li><a href="cart.html">Cart</a></li>
+                  <li><a href="contact.html">Contact Us</a></li>
+               </ul>
+            </div>
+         </div>
+         <div class="col-lg-3 col-sm-6">
+            <h2 class="useful_text">Repair</h2>
+            <p class="lorem_text">Lorem ipsum dolor sit amet.</p>
+         </div>
+         <div class="col-lg-3 col-sm-6">
+            <h2 class="useful_text">Social Media</h2>
+            <div id="social">
+               <a class="facebookBtn smGlobalBtn" href="#"></a>
+               <a class="twitterBtn smGlobalBtn" href="#"></a>
+               <a class="googleplusBtn smGlobalBtn" href="#"></a>
+               <a class="linkedinBtn smGlobalBtn" href="#"></a>
+            </div>
+         </div>
+         <div class="col-sm-6 col-lg-3">
+            <h1 class="useful_text">Our Repair center</h1>
+            <p class="footer_text">Lorem ipsum dolor sit amet.</p>
+         </div>
+      </div>
+    </div>
+  </div>
+  <div class="copyright_section">
+    <div class="container">
+      <p>2020 All Rights Reserved. Design by Free html Templates</p>
+    </div>
+  </div>
+  <!-- JS -->
+  <script src="js/jquery.min.js"></script>
+  <script src="js/popper.min.js"></script>
+  <script src="js/bootstrap.bundle.min.js"></script>
+  <script src="js/plugin.js"></script>
+  <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+  <script src="js/custom.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const userDropdown = document.getElementById('user-dropdown-content');
+
+      function updateUserDropdown(data) {
+        userDropdown.innerHTML = ''; // Xóa nội dung cũ
+        if (!data.loggedIn) {
+          // Nếu chưa đăng nhập
+          userDropdown.innerHTML = `
+            <a class="dropdown-item" href="login.html">Login</a>
+            <a class="dropdown-item" href="register.html">Register</a>
+          `;
+        } else {
+          // Nếu đã đăng nhập
+          userDropdown.innerHTML = `
+            <span class="dropdown-item-text">Hello, ${data.username||''}</span>
+            <a class="dropdown-item" href="#">Profile</a>
+            ${data.role === 'admin' ? '<a class="dropdown-item" href="admin.html">Admin Panel</a>' : ''}
+            <a class="dropdown-item" href="/auth/logout">Logout</a>
+          `;
+        }
+      }
+
+      // Gửi yêu cầu tới API /auth/me để kiểm tra trạng thái đăng nhập
+      fetch('/auth/me', {
+        method: 'GET',
+        credentials: 'include' // Đảm bảo cookie được gửi kèm
+      })
+      .then(res => {
+        if (res.ok) return res.json();
+        throw new Error('Failed to fetch /auth/me');
+      })
+      .then(data => updateUserDropdown(data))
+      .catch(err => {
+        console.error('Error fetching /auth/me:', err);
+        updateUserDropdown({ loggedIn: false });
+      });
+    });
+  </script>
+</body>
+</html>

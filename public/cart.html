@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>BestWatch - Cart</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="icon" href="images/fevicon.png" type="image/gif" />
+  <link rel="stylesheet" href="css/jquery.mCustomScrollbar.min.css">
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+  <link rel="stylesheet" href="css/owl.carousel.min.css">
+
+  <style>
+    .cart-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 30px;
+    }
+
+    .cart-table th,
+    .cart-table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      vertical-align: middle;
+    }
+
+    .cart-table th {
+      background: #f5f5f5;
+      text-align: center;
+    }
+
+    .cart-table td img {
+      max-width: 80px;
+      height: auto;
+    }
+
+    .cart-actions {
+      display: flex;
+      gap: 5px;
+    }
+
+    .cart-quantity-form input[type="number"] {
+      width: 60px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- header -->
+  <div class="header_section">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container">
+        <a class="logo" href="index.html"><img style="width: 70px; height: 70px;" src="images/logo.png"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item"><a class="nav-link" href="/index.html">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="/products.html">Product</a></li>
+            <li class="nav-item"><a class="nav-link" href="/cart.html">Cart</a></li>
+            <li class="nav-item"><a class="nav-link" href="">Shop</a></li>
+            <li class="nav-item"><a class="nav-link" href="">Contact Us</a></li>
+            <li id="admin-menu" class="nav-item"><a class="nav-link active" href="admin.html"><strong>Admin
+                  manage</strong></a></li>
+          </ul>
+          <form class="form-inline my-2 my-lg-0">
+            <div class="search_icon">
+              <ul>
+                <div class="dropdown" id="user-menu">
+                  <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
+                    aria-expanded="false">
+                    <img src="images/user-icon.png">
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="userDropdown" id="user-dropdown-content">
+                    <!-- Nội dung sẽ thay đổi dựa trên login -->
+                  </div>
+                </div>
+              </ul>
+            </div>
+          </form>
+        </div>
+    </nav>
+  </div>
+  <!-- header end -->
+
+  <div class="container" style="margin-top:50px;margin-bottom:50px; height: 100%;">
+    <div id="cart-container"></div>
+
+    <div style="padding-top: 100px; align-items: center; height: 200px;">
+      <h3 id="total" style="margin-top:20px; padding-top: 20px;">Total: $0</h3>
+    </div>
+    <form action="/cart/checkout" method="POST" style="margin-top:20px;">
+      <button class="btn btn-primary">Checkout</button>
+    </form>
+    <div id="checkout-message" style="margin-top:20px; color: green; text-size-adjust: 40px;"></div>
+  </div>
+
+  <!-- footer -->
+  <div class="footer_section">
+    <div class="container">
+      <!-- giống footer index -->
+      <div class="footer_location_text">
+        <ul>
+          <li><img src="images/map-icon.png"><span class="padding_left_10"><a href="#">Address here</a></span></li>
+          <li><img src="images/call-icon.png"><span class="padding_left_10"><a href="#">Call : +7586656566</a></span>
+          </li>
+          <li><img src="images/mail-icon.png"><span class="padding_left_10"><a href="#">demo@gmail.com</a></span></li>
+        </ul>
+      </div>
+      <div class="row">
+        <div class="col-lg-3 col-sm-6">
+          <h2 class="useful_text">Useful link </h2>
+          <div class="footer_menu">
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="products.html">Product</a></li>
+              <li><a href="cart.html">Cart</a></li>
+              <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+          <h2 class="useful_text">Repair</h2>
+          <p class="lorem_text">Lorem ipsum dolor sit amet.</p>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+          <h2 class="useful_text">Social Media</h2>
+          <div id="social">
+            <a class="facebookBtn smGlobalBtn" href="#"></a>
+            <a class="twitterBtn smGlobalBtn" href="#"></a>
+            <a class="googleplusBtn smGlobalBtn" href="#"></a>
+            <a class="linkedinBtn smGlobalBtn" href="#"></a>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <h1 class="useful_text">Our Repair center</h1>
+          <p class="footer_text">Lorem ipsum dolor sit amet.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- JS -->
+  <script src="js/jquery.min.js"></script>
+  <script src="js/popper.min.js"></script>
+  <script src="js/bootstrap.bundle.min.js"></script>
+  <script src="js/jquery-3.0.0.min.js"></script>
+  <script src="js/plugin.js"></script>
+  <!-- sidebar -->
+  <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+  <script src="js/custom.js"></script>
+  <!-- javascript -->
+  <script src="js/owl.carousel.js"></script>
+  <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const checkoutStatus = params.get('checkout');
+
+      if (checkoutStatus === 'success') {
+        // Người dùng vừa checkout thành công (giỏ trước đó có sản phẩm)
+        document.getElementById('checkout-message').innerText = "You have successfully purchased!";
+      } else if (checkoutStatus === 'empty') {
+        // Người dùng checkout nhưng giỏ trống
+        document.getElementById('checkout-message').innerText = "No products were purchased because your cart was empty.";
+      }
+      fetch('/cart')
+        .then(res => {
+          if (res.status === 401) {
+            // Not logged in
+            document.getElementById('cart-container').innerHTML = "Please login first to view cart.";
+            return [];
+          }
+          return res.json();
+        })
+        .then(data => {
+          if (!Array.isArray(data)) return; // if not logged in
+          const container = document.getElementById('cart-container');
+          if (data.length === 0) {
+            container.innerHTML = "<p>Your cart is empty.</p>";
+            document.getElementById('total').innerText = "Total: $0";
+            return;
+          }
+
+          let total = 0;
+          let tableHTML = `
+            <table class="cart-table">
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Product</th>
+                  <th>Price</th>
+                  <th>Quantity</th>
+                  <th>Subtotal</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+          `;
+          data.forEach(item => {
+            const subtotal = item.productId.price * item.quantity;
+            total += subtotal;
+            tableHTML += `
+              <tr>
+                <td><img src="${item.productId.image || 'images/default-product.png'}" alt="${item.productId.name}"></td>
+                <td>${item.productId.name}</td>
+                <td>$${item.productId.price}</td>
+                <td>
+                  <form class="cart-quantity-form" action="/cart/update" method="POST" style="display:inline-block;">
+                    <input type="hidden" name="productId" value="${item.productId._id}">
+                    <input type="number" name="quantity" value="${item.quantity}" min="1">
+                    <button type="submit" class="btn btn-sm btn-info" style="margin-left:5px;">Update</button>
+                  </form>
+                </td>
+                <td>$${subtotal}</td>
+                <td>
+                  <form action="/cart/remove" method="POST" style="display:inline-block;">
+                    <input type="hidden" name="productId" value="${item.productId._id}">
+                    <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+                  </form>
+                </td>
+              </tr>
+            `;
+          });
+          tableHTML += `</tbody></table>`;
+          container.innerHTML = tableHTML;
+          document.getElementById('total').innerText = "Total: $" + total;
+        });
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('/auth/me')
+        .then(res => res.json())
+        .then(data => {
+          const userDropdown = document.getElementById('user-dropdown-content');
+          const adminMenu = document.getElementById('admin-menu');
+
+          userDropdown.innerHTML = '';
+          if (!data.loggedIn) {
+            // Chưa đăng nhập
+            userDropdown.innerHTML = `
+              <a class="dropdown-item" href="login.html">Login</a>
+              <a class="dropdown-item" href="register.html">Register</a>
+            `;
+            if (adminMenu) {
+              // Ẩn menu admin nếu chưa đăng nhập
+              adminMenu.classList.add('d-none');
+            }
+          } else {
+            // Đã đăng nhập
+            userDropdown.innerHTML = `
+              <a class="dropdown-item" href="#">Profile</a>
+              ${data.role === 'admin' ? '<a class="dropdown-item" href="admin.html">Admin Panel</a>' : ''}
+              <a class="dropdown-item" href="/auth/logout">Logout</a>
+            `;
+            if (adminMenu) {
+              // Hiển thị menu admin nếu vai trò là admin
+              if (data.role === 'admin') {
+                adminMenu.classList.remove('d-none');
+              } else {
+                adminMenu.classList.add('d-none');
+              }
+            }
+          }
+        });
+    });
+  </script>
+</body>
+
+</html>
