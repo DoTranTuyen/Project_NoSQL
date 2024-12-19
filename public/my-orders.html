@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Orders - BestWatch</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Header -->
+  <div class="header_section">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+       <div class="container">
+          <a class="logo" href="index.html"><img style="width: 70px; height: 70px;" src="images/logo.png"></a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+             <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+             <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a class="nav-link" href="/index.html">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/products.html">Product</a></li>
+                <li class="nav-item"><a class="nav-link" href="/cart.html">Cart</a></li>
+                <li class="nav-item"><a class="nav-link" href="/my-orders.html">My Order</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/chat.html">Chat</a></li>
+                        <li id="admin-menu" class="nav-item"><a class="nav-link active" href="admin.html"><strong>Admin
+                                    manage</strong></a></li>
+             </ul>
+             <form class="form-inline my-2 my-lg-0">
+                <div class="search_icon">
+                   <ul>
+                      <div class="dropdown" id="user-menu">
+                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                            data-toggle="dropdown" aria-expanded="false">
+                            <img src="images/user-icon.png">
+                         </a>
+                         <div class="dropdown-menu" aria-labelledby="userDropdown" id="user-dropdown-content">
+                            <!-- Nội dung sẽ thay đổi dựa trên login -->
+                         </div>
+                      </div>
+                   </ul>
+                </div>
+             </form>
+          </div>
+    </nav>
+ </div>
+
+  <div class="container" style="margin-top:50px; margin-bottom:50px;">
+    <table class="table table-bordered table-hover">
+      <thead class="thead-light">
+        <tr>
+          <th>#</th>
+          <th>Order Date</th>
+          <th>Items</th>
+          <th>Total</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="orders-table-body">
+        <!-- Sẽ được điền động bởi JS -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Footer  -->
+  <div class="footer_section">
+    <div class="container">
+       <div class="footer_location_text">
+          <ul>
+             <li><img src="images/map-icon.png"><span class="padding_left_10"><a href="#">Loram Ipusm hosting
+                      web</a></span></li>
+             <li><img src="images/call-icon.png"><span class="padding_left_10"><a href="#">Call :
+                      +7586656566</a></span></li>
+             <li><img src="images/mail-icon.png"><span class="padding_left_10"><a href="#">demo@gmail.com</a></span>
+             </li>
+          </ul>
+       </div>
+       <div class="row">
+          <div class="col-lg-3 col-sm-6">
+             <h2 class="useful_text">Useful link </h2>
+             <div class="footer_menu">
+                <ul>
+                   <li><a href="index.html">Home</a></li>
+                   <li><a href="">About</a></li>
+                   <li><a href="">Our Designe</a></li>
+                   <li><a href="">Contact Us</a></li>
+                </ul>
+             </div>
+          </div>
+          <div class="col-lg-3 col-sm-6">
+             <h2 class="useful_text">Repair</h2>
+             <p class="lorem_text">Lorem ipsum dolor sit amet, consectetur adipiscinaliqua Loreadipiscing </p>
+          </div>
+          <div class="col-lg-3 col-sm-6">
+             <h2 class="useful_text">Social Media</h2>
+             <div id="social">
+                <a class="facebookBtn smGlobalBtn active" href="#"></a>
+                <a class="twitterBtn smGlobalBtn" href="#"></a>
+                <a class="googleplusBtn smGlobalBtn" href="#"></a>
+                <a class="linkedinBtn smGlobalBtn" href="#"></a>
+             </div>
+          </div>
+          <div class="col-sm-6 col-lg-3">
+             <h1 class="useful_text">Our Repair center</h1>
+             <p class="footer_text">Lorem ipsum dolor sit amet, consectetur adipiscinaliquaLoreadipiscing </p>
+          </div>
+       </div>
+    </div>
+ </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('/orders/my-orders', {
+        method: 'GET',
+        credentials: 'include'
+      })
+      .then(res => res.json())
+      .then(orders => {
+        const tbody = document.getElementById('orders-table-body');
+        tbody.innerHTML = '';
+        orders.forEach((order, index) => {
+          const total = order.items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+          const items = order.items.map(item => `${item.productId.name} x${item.quantity}`).join(', ');
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${new Date(order.createdAt).toLocaleString()}</td>
+            <td>${items}</td>
+            <td>$${total.toFixed(2)}</td>
+            <td>${order.status}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      })
+      .catch(err => {
+        console.error('Error fetching orders:', err);
+        alert('Failed to load orders.');
+      });
+    });
+  </script>
+  <script>
+   document.addEventListener('DOMContentLoaded', () => {
+      const userDropdown = document.getElementById('user-dropdown-content');
+      const adminMenu = document.getElementById('admin-menu');
+
+      function updateUserDropdown(data) {
+         userDropdown.innerHTML = ''; // Xóa nội dung cũ
+         if (!data.loggedIn) {
+            // Nếu chưa đăng nhập
+            userDropdown.innerHTML = `
+     <a class="dropdown-item" href="login.html">Login</a>
+     <a class="dropdown-item" href="register.html">Register</a>
+   `;
+            if (adminMenu) {
+               // Ẩn menu admin nếu chưa đăng nhập
+               adminMenu.classList.add('d-none');
+            }
+         } else {
+            // Nếu đã đăng nhập
+            userDropdown.innerHTML = `
+     <span class="dropdown-item-text">Hello, ${data.username}</span>
+     <a class="dropdown-item" href="#">Profile</a>
+     ${data.role === 'admin' ? '<a class="dropdown-item" href="index_admin.html">Admin Panel</a>' : ''}
+     <a class="dropdown-item" href="/auth/logout">Logout</a>
+   `;
+            if (adminMenu) {
+               // Hiển thị menu admin nếu vai trò là admin
+               if (data.role === 'admin') {
+                  adminMenu.classList.remove('d-none');
+               } else {
+                  adminMenu.classList.add('d-none');
+               }
+            }
+         }
+      }
+
+      // Gửi yêu cầu tới API /auth/me để kiểm tra trạng thái đăng nhập
+      fetch('/auth/me', {
+         method: 'GET',
+         credentials: 'include' // Đảm bảo cookie được gửi kèm
+      })
+         .then(res => {
+            if (res.ok) return res.json();
+            throw new Error('Failed to fetch /auth/me');
+         })
+         .then(data => updateUserDropdown(data))
+         .catch(err => {
+            console.error('Error fetching /auth/me:', err);
+            updateUserDropdown({ loggedIn: false });
+         });
+   });
+
+</script>
+</body>
+</html>

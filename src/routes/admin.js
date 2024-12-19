@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
+const { getAllUsers } = require('../controllers/userController');
 const { requireAuth, requireAdmin } = require('../middleware/authMiddleware');
 const multer = require('multer');
 const path = require('path');
@@ -16,7 +17,7 @@ const storage = multer.diskStorage({
   }
 });
 const upload = multer({ storage: storage });
-
+router.get('/users', requireAuth, requireAdmin, getAllUsers);
 router.get('/', requireAuth, requireAdmin, adminController.apiGetAdminProducts);
 router.post('/create', requireAuth, requireAdmin, upload.single('productImage'), adminController.createProduct);
 router.post('/update/:id', requireAuth, requireAdmin, upload.single('productImage'), adminController.updateProduct);
